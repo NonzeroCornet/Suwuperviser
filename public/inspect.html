@@ -5,9 +5,15 @@
     <link rel="stylesheet" href="/inspectstyles.css" />
     <script src="/socket.io/socket.io.js"></script>
   </head>
-  <body>
+  <body
+    onload="setTimeout(()=>document.getElementById('transitionDiv').style.opacity = 0, 500)"
+  >
+    <div id="transitionDiv"></div>
     <header>
-      <a href="/"><img src="/house.png" /></a>
+      <a
+        onclick="document.getElementById('transitionDiv').style.opacity = 1; setTimeout(()=>window.location.href = '/', 500);"
+        ><img src="/house.png"
+      /></a>
       <h1 id="process-name"></h1>
     </header>
     <main>

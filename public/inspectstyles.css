@@ -276,8 +276,22 @@ img {
   left: 50px;
   top: 50px;
   width: 80px;
+  cursor: pointer;
 }
 
 #process-name {
   margin-top: 40px;
+}
+
+#transitionDiv {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  pointer-events: none;
+  width: 100vw;
+  height: 100vh;
+  background: #1a1a1a;
+  z-index: 1;
+  transition: all 0.5s;
+  opacity: 1;
 }

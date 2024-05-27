@@ -28,7 +28,11 @@ function updateProcessList() {
 
     const inspectButton = row.querySelector(".inspect-btn");
     inspectButton.addEventListener("click", () => {
-      window.location.href = "/inspect/" + process.uuid;
+      document.getElementById("transitionDiv").style.opacity = 1;
+      setTimeout(
+        () => (window.location.href = "/inspect/" + process.uuid),
+        500
+      );
     });
   });
 }
