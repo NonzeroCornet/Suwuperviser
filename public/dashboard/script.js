@@ -90,6 +90,107 @@ socket.on("uploadResult", (result) => {
   }
 });
 
+let cpuUsage = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+let ramAvailability = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+let networkUsage1 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+let networkUsage2 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+const xValues = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+socket.on("hardware", (data) => {
+  console.log(data);
+  cpuUsage.shift();
+  cpuUsage.push(data[0] / 100);
+  cpuChart.update();
+  ramAvailability.shift();
+  ramAvailability.push(data[1]);
+  ramChart.update();
+  networkUsage1.shift();
+  networkUsage1.push(data[2][0] / 100000000);
+  networkUsage2.shift();
+  networkUsage2.push(data[2][1] / 1000000000);
+  networkChart.update();
+});
+
+let cpuChart = new Chart("cpu-usage-chart", {
+  type: "line",
+  data: {
+    labels: xValues,
+    datasets: [
+      {
+        fill: false,
+        lineTension: 0,
+        backgroundColor: "rgba(0,0,255,1.0)",
+        borderColor: "rgba(0,0,255,1.0)",
+        data: cpuUsage,
+      },
+    ],
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    legend: { display: false },
+    scales: {
+      yAxes: [{ ticks: { min: 0, max: 1 } }],
+    },
+  },
+});
+
+let ramChart = new Chart("ram-availability-chart", {
+  type: "line",
+  data: {
+    labels: xValues,
+    datasets: [
+      {
+        fill: false,
+        lineTension: 0,
+        backgroundColor: "rgba(0,0,255,1.0)",
+        borderColor: "rgba(0,0,255,1.0)",
+        data: ramAvailability,
+      },
+    ],
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    legend: { display: false },
+    scales: {
+      yAxes: [{ ticks: { min: 0, max: 32 } }],
+    },
+  },
+});
+
+let networkChart = new Chart("network-traffic-chart", {
+  type: "line",
+  data: {
+    labels: xValues,
+    datasets: [
+      {
+        fill: false,
+        lineTension: 0,
+        backgroundColor: "rgba(0,0,255,1.0)",
+        borderColor: "rgba(0,0,255,1.0)",
+        data: networkUsage1,
+      },
+      {
+        fill: false,
+        lineTension: 0,
+        backgroundColor: "rgba(255,0,0,1.0)",
+        borderColor: "rgba(255,0,0,1.0)",
+        data: networkUsage2,
+      },
+    ],
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    legend: { display: false },
+    scales: {
+      yAxes: [{ ticks: { min: 0, max: 10 } }],
+    },
+  },
+});
+
 let jokes = [
   "When the window fell into the incinerator, it was a pane in the ash to retrieve.",
   "What's a pirate's favorite letter? It be the Sea",

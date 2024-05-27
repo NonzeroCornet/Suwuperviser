@@ -42,11 +42,17 @@ main {
   justify-content: space-between;
 }
 
-canvas {
+.canvasContainer {
   width: 30%;
   height: 200px;
+  text-align: center;
+}
+
+canvas {
   background-color: #1a1a1a;
   border: 1px solid #4d4d4d;
+  width: 100%;
+  height: 100%;
 }
 
 .add-process form {

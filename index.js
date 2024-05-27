@@ -22,6 +22,7 @@ const unzipper = require("unzipper");
 const os = require("os");
 const { exec } = require("child_process");
 const git = require("isomorphic-git");
+const getSystemUsage = require("./systemUsage.js");
 
 const app = express();
 app.use(cookieParser());
@@ -314,7 +315,15 @@ setInterval(() => {
       programs[i].status = online ? "Online" : "Offline";
     });
   }
-}, 10000);
+
+  getSystemUsage().then((usage) => {
+    io.emit("hardware", [
+      usage.cpuUsage,
+      usage.ramAvailability,
+      usage.networkUsage,
+    ]);
+  });
+}, 3000);
 
 const PORT = process.env.PORT || 8080;
 server.listen(PORT, () => {

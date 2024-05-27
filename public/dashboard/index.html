@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="styles.css" />
     <script src="/socket.io/socket.io.js"></script>
     <script src="/sweetalert.js"></script>
+    <script src="/Chart.js"></script>
   </head>
   <body
     onload="setTimeout(()=>document.getElementById('transitionDiv').style.opacity = 0, 500)"
@@ -27,9 +28,18 @@
         <div class="hardware-stats">
           <h2>Hardware Stats</h2>
           <div class="graph-container">
-            <canvas id="cpu-usage-chart"></canvas>
-            <canvas id="cpu-temp-chart"></canvas>
-            <canvas id="network-traffic-chart"></canvas>
+            <div class="canvasContainer">
+              <canvas id="cpu-usage-chart"></canvas><br />
+              CPU Usage
+            </div>
+            <div class="canvasContainer">
+              <canvas id="ram-availability-chart"></canvas><br />
+              RAM Availability
+            </div>
+            <div class="canvasContainer">
+              <canvas id="network-traffic-chart"></canvas><br />
+              Network Usage
+            </div>
           </div>
         </div>
         <div class="add-process">
