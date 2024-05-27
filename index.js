@@ -1,10 +1,17 @@
+const fs = require("fs");
+if (!fs.existsSync("./programs")) {
+  fs.mkdirSync("./programs");
+}
+if (!fs.existsSync(".env")) {
+  fs.writeFileSync(".env", "PASSWORD=enter_a_sha256_hash_here\nPORT=8080");
+}
+
 require("dotenv").config();
 const express = require("express");
 const { join, extname } = require("node:path");
 const { createServer } = require("node:http");
 const { Server } = require("socket.io");
 const cookieParser = require("cookie-parser");
-const fs = require("fs");
 const { isText } = require("istextorbinary");
 const crypto = require("node:crypto");
 const unzipper = require("unzipper");
