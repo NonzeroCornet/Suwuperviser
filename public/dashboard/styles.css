@@ -12,6 +12,7 @@ header {
   padding: 20px;
   text-align: center;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  height: 140px;
 }
 
 main {
@@ -120,4 +121,11 @@ button {
 
 button:hover {
   transform: scale(1.05);
+}
+
+img {
+  position: absolute;
+  left: 50px;
+  top: 50px;
+  width: 80px;
 }
