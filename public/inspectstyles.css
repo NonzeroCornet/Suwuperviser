@@ -237,7 +237,7 @@ button:hover {
   padding: 20px;
 }
 
-.file-tree {
+#file-tree {
   width: 200px;
   height: 300px;
   background-color: #2b2b2b;
@@ -245,9 +245,10 @@ button:hover {
   padding: 10px;
   overflow-y: scroll;
   border-radius: 5px;
+  padding-top: 24px;
 }
 
-.file-content {
+#file-content {
   flex-grow: 1;
   height: 300px;
   background-color: #2b2b2b;
@@ -256,6 +257,9 @@ button:hover {
   overflow-y: scroll;
   border-radius: 5px;
   margin-left: 10px;
+  text-align: left;
+  width: 0px;
+  padding-bottom: 24px;
 }
 
 label,
@@ -299,4 +303,8 @@ img {
   z-index: 1;
   transition: all 0.5s;
   opacity: 1;
+}
+
+.pointer {
+  cursor: pointer;
 }

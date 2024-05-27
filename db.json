@@ -1,0 +1,10 @@
+{
+  "programs": [
+    {
+      "name": "Trackmania",
+      "port": "1123",
+      "uuid": "8c38723f-d794-41fb-865c-428f332d9c3f",
+      "autostart": false
+    }
+  ]
+}

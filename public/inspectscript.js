@@ -38,3 +38,27 @@ autostartSwitch.addEventListener("change", () => {
 });
 
 const terminalOutput = document.querySelector(".terminal-output");
+
+socket.emit("inspect", programId);
+
+socket.on("inspectr", (data) => {
+  for (let i = 0; i < data[0].length; i++) {
+    document.getElementById("file-tree").innerHTML +=
+      "<span onclick='getFile(this)' class='pointer'>" +
+      data[0][i] +
+      "</span><br><br>";
+  }
+});
+
+function getFile(el) {
+  document.getElementById("file-content").innerText = "READING...";
+  socket.emit("readFile", programId + "/" + el.innerHTML);
+}
+
+socket.on("sendFile", (data) => {
+  console.log([data]);
+  document.getElementById("file-content").innerHTML = data
+    .replace(/[\u00A0-\u9999<>\&]/g, (i) => "&#" + i.charCodeAt(0) + ";")
+    .replaceAll("\r\n", "<br>")
+    .replaceAll(" ", "&nbsp;&nbsp;");
+});

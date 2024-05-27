@@ -52,19 +52,42 @@ addProcessForm.addEventListener("submit", (e) => {
     console.log(
       `Adding process ${processName} from ZIP file on port ${processPort}`
     );
-    handleZipUpload(processZip);
+    handleZipUpload(processZip, processName, processPort);
   }
   addProcessForm.reset();
 });
 
-function handleZipUpload(zipFile) {
+function handleZipUpload(zipFile, programName, programPort) {
   const reader = new FileReader();
-  reader.onload = () => {
-    const zipData = reader.result;
-    console.log("ZIP file data:", zipData);
+
+  reader.onload = function (event) {
+    socket.emit("upload", {
+      file: event.target.result,
+      name: programName,
+      port: programPort,
+    });
   };
+
   reader.readAsArrayBuffer(zipFile);
 }
+
+socket.on("uploadResult", (result) => {
+  if (result) {
+    Swal.fire({
+      title: "Success!",
+      icon: "success",
+    }).then(() => {
+      window.location.href = "/";
+    });
+  } else {
+    Swal.fire({
+      title: "Something went wrong!",
+      icon: "error",
+    }).then(() => {
+      window.location.href = "/";
+    });
+  }
+});
 
 let jokes = [
   "When the window fell into the incinerator, it was a pane in the ash to retrieve.",
