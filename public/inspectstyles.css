@@ -279,6 +279,11 @@ img {
   cursor: pointer;
 }
 
+.right {
+  left: unset;
+  right: 50px;
+}
+
 #process-name {
   margin-top: 40px;
 }

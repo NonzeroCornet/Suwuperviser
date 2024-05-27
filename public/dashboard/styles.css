@@ -131,6 +131,11 @@ img {
   cursor: pointer;
 }
 
+.right {
+  left: unset;
+  right: 50px;
+}
+
 #transitionDiv {
   position: fixed;
   top: 0px;
