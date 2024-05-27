@@ -275,6 +275,14 @@ h2 {
   color: white;
 }
 
+.run {
+  background: blue;
+  border-radius: 10px;
+  padding: 0px 6px 6px 6px;
+  color: white;
+  cursor: pointer;
+}
+
 img {
   position: absolute;
   left: 50px;

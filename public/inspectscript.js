@@ -34,7 +34,7 @@ function updateProcessDetails() {
 
 const autostartSwitch = document.getElementById("autostart");
 autostartSwitch.addEventListener("change", () => {
-  console.log(`Autostart: ${autostartSwitch.checked}`);
+  socket.emit("autostart", [programId, autostartSwitch.checked]);
 });
 
 const terminalOutput = document.querySelector(".terminal-output");
@@ -42,6 +42,10 @@ const terminalOutput = document.querySelector(".terminal-output");
 socket.emit("inspect", programId);
 
 socket.on("inspectr", (data) => {
+  terminalOutput.innerHTML = data[1]
+    .replace(/[\u00A0-\u9999<>\&]/g, (i) => "&#" + i.charCodeAt(0) + ";")
+    .replaceAll("\r\n", "<br>")
+    .replaceAll(" ", "&nbsp;&nbsp;");
   for (let i = 0; i < data[0].length; i++) {
     document.getElementById("file-tree").innerHTML +=
       "<span onclick='getFile(this)' class='pointer'>" +
@@ -62,3 +66,16 @@ socket.on("sendFile", (data) => {
     .replaceAll("\r\n", "<br>")
     .replaceAll(" ", "&nbsp;&nbsp;");
 });
+
+function run() {
+  Swal.fire({
+    title: "Caution",
+    text: "If this process is currently running, quite a few things will break and you may need to restart all programs on the server! Continue?",
+    icon: "warning",
+    showCancelButton: true,
+  }).then((v) => {
+    if (v.isConfirmed) {
+      socket.emit("run", programId);
+    }
+  });
+}

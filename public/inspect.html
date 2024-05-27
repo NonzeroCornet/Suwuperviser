@@ -4,6 +4,7 @@
     <title>Program Details</title>
     <link rel="stylesheet" href="/inspectstyles.css" />
     <script src="/socket.io/socket.io.js"></script>
+    <script src="/sweetalert.js"></script>
   </head>
   <body
     onload="setTimeout(()=>document.getElementById('transitionDiv').style.opacity = 0, 500)"
@@ -23,7 +24,8 @@
     <main>
       <div class="process-info">
         <p>Port: <span id="process-port"></span></p>
-        <p>Status: <span id="process-status">Offline</span></p>
+        <p>HTTP: <span id="process-status">Offline</span></p>
+        <p><span class="run" onclick="run()">Run</span></p>
         <div class="autostart">
           <label for="autostart">Autostart</label>
           <label class="switch">
@@ -33,7 +35,7 @@
         </div>
       </div>
       <div class="terminal">
-        <div class="terminal-output"></div>
+        <div class="terminal-output">Fetching terminal data...</div>
       </div>
     </main>
     <center>

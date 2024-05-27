@@ -5,16 +5,21 @@ if (!fs.existsSync("./programs")) {
 if (!fs.existsSync(".env")) {
   fs.writeFileSync(".env", "PASSWORD=enter_a_sha256_hash_here\nPORT=8080");
 }
+if (!fs.existsSync("db.json")) {
+  fs.writeFileSync("db.json", "{'programs': []}");
+}
 
 require("dotenv").config();
 const express = require("express");
 const { join, extname } = require("node:path");
-const { createServer } = require("node:http");
+const { createServer, get } = require("node:http");
 const { Server } = require("socket.io");
 const cookieParser = require("cookie-parser");
 const { isText } = require("istextorbinary");
 const crypto = require("node:crypto");
 const unzipper = require("unzipper");
+const os = require("os");
+const { exec } = require("child_process");
 
 const app = express();
 app.use(cookieParser());
@@ -55,6 +60,9 @@ fs.readFile(dbPath, "utf8", (err, data) => {
           status: "Offline",
           autostart: program.autostart,
         });
+        if (program.autostart) {
+          runProgram(program.uuid);
+        }
       }
     } catch (parseErr) {
       console.error("Error parsing JSON:", parseErr);
@@ -126,7 +134,14 @@ io.on("connection", (socket) => {
     let out = [];
 
     findTextFiles("./programs/" + uuid, out, () => {
-      socket.emit("inspectr", [out]);
+      fs.readFile("./programs/" + uuid + "/.suwut", (err, data) => {
+        if (err) {
+          console.error(`Error reading terminal: ${err.message}`);
+          socket.emit("inspectr", [out, "Error reading terminal."]);
+        } else {
+          socket.emit("inspectr", [out, data.toString()]);
+        }
+      });
     });
   });
   socket.on("readFile", (dir) => {
@@ -161,6 +176,8 @@ io.on("connection", (socket) => {
               autostart: false,
             });
             saveDb();
+            fs.writeFileSync("./programs/" + newId + "/.suwut", "");
+            runProgram(newId);
             fs.unlink(filepath, () => {
               socket.emit("uploadResult", true);
             });
@@ -172,7 +189,85 @@ io.on("connection", (socket) => {
       }
     });
   });
+
+  socket.on("run", (uuid) => {
+    runProgram(uuid);
+    setTimeout(() => {
+      for (let i = 0; i < programs.length; i++) {
+        isOnline(programs[i].port, (online) => {
+          programs[i].status = online ? "Online" : "Offline";
+        });
+      }
+    }, 2000);
+  });
+
+  socket.on("autostart", (v) => {
+    programs.find((el) => el.uuid == v[0]).autostart = v[1];
+    saveDb();
+  });
 });
+
+const isWindows = os.platform() === "win32";
+const script = isWindows ? "start.bat" : "start.sh";
+
+function runProgram(uuid) {
+  const outputFilePath = join(__dirname + "/programs/" + uuid, ".suwut");
+  const scriptPath = join(
+    'C:\\"' + __dirname.slice(3) + '"/programs/' + uuid,
+    script
+  );
+  const command = isWindows ? `cmd.exe /c ${scriptPath}` : scriptPath;
+
+  const child = exec(
+    command,
+    { cwd: join(__dirname, "programs", uuid) },
+    (error, stdout, stderr) => {
+      if (error) {
+        return;
+      }
+    }
+  );
+
+  // Pipe the stdout and stderr to the output file
+  const outputStream = fs.createWriteStream(outputFilePath);
+  child.stdout.pipe(outputStream);
+  child.stderr.pipe(outputStream);
+
+  // Handle child process exit
+  child.on("exit", (code) => {
+    outputStream.end();
+  });
+}
+
+function isOnline(port, callback) {
+  get("http://127.0.0.1:" + port, (res) => {
+    const { statusCode } = res;
+
+    if (statusCode >= 200 && statusCode < 400) {
+      callback(true);
+    } else {
+      callback(false);
+    }
+  }).on("error", (err) => {
+    callback(false);
+  });
+}
+
+setTimeout(() => {
+  for (let i = 0; i < programs.length; i++) {
+    isOnline(programs[i].port, (online) => {
+      programs[i].status = online ? "Online" : "Offline";
+    });
+  }
+}, 2000);
+
+setInterval(() => {
+  for (let i = 0; i < programs.length; i++) {
+    isOnline(programs[i].port, (online) => {
+      programs[i].status = online ? "Online" : "Offline";
+    });
+  }
+}, 10000);
 
 const PORT = process.env.PORT || 8080;
 server.listen(PORT, () => {

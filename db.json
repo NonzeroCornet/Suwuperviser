@@ -2,8 +2,14 @@
   "programs": [
     {
       "name": "Trackmania",
-      "port": "1123",
-      "uuid": "8c38723f-d794-41fb-865c-428f332d9c3f",
+      "port": "1234",
+      "uuid": "f2892f07-1f89-4b79-b31f-99c090651fc2",
+      "autostart": false
+    },
+    {
+      "name": "Audio Visualizer",
+      "port": "80",
+      "uuid": "58f3b8de-9790-4761-b33b-0b29e051f962",
       "autostart": false
     }
   ]
