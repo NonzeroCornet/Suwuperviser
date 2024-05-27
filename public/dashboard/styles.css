@@ -1,0 +1,123 @@
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #1a1a1a;
+  color: #e0e0e0;
+}
+
+header {
+  background: linear-gradient(45deg, #ff00cc, #333399);
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+main {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 20px;
+}
+
+.top-section {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.hardware-stats,
+.add-process {
+  width: 47%;
+  background-color: #2b2b2b;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.graph-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+canvas {
+  width: 30%;
+  height: 200px;
+  background-color: #1a1a1a;
+  border: 1px solid #4d4d4d;
+}
+
+.add-process form {
+  display: flex;
+  flex-direction: column;
+}
+
+.add-process label {
+  margin-top: 10px;
+  color: #ff00cc;
+  font-weight: bold;
+}
+
+.add-process input,
+.add-process button {
+  margin-top: 5px;
+  padding: 10px;
+  background-color: #333333;
+  color: #e0e0e0;
+  border: none;
+  border-radius: 5px;
+}
+
+.add-process button {
+  background: linear-gradient(45deg, #ff00cc, #333399);
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 20px;
+}
+
+.add-process button:hover {
+  transform: scale(1.02);
+}
+
+.process-list {
+  width: 100%;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #2b2b2b;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+th,
+td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #4d4d4d;
+}
+
+th {
+  background-color: #333333;
+  color: #ff00cc;
+}
+
+tr:hover {
+  background-color: #3b3b3b;
+}
+
+button {
+  background: linear-gradient(45deg, #ff00cc, #333399);
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  transform: scale(1.05);
+}

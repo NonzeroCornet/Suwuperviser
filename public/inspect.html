@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Program Details</title>
+    <link rel="stylesheet" href="/inspectscript.css" />
+    <script src="/socket.io/socket.io.js"></script>
+  </head>
+  <body>
+    <header>
+      <a href="/dashboard" style="color: white">
+        <h1 id="process-name"></h1>
+      </a>
+    </header>
+    <main>
+      <div class="process-info">
+        <p>Port: <span id="process-port"></span></p>
+        <p>Status: <span id="process-status">Offline</span></p>
+        <div class="autostart">
+          <label for="autostart">Autostart</label>
+          <label class="switch">
+            <input id="autostart" type="checkbox" />
+            <span class="slider round"></span>
+          </label>
+        </div>
+      </div>
+      <div class="terminal">
+        <div class="terminal-output"></div>
+      </div>
+    </main>
+    <center>
+      <div class="file-viewer">
+        <div class="file-tree"></div>
+        <div class="file-content"></div>
+      </div>
+    </center>
+    <script src="/inspectscript.js"></script>
+  </body>
+</html>

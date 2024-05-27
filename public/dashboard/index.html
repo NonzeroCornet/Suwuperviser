@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="/socket.io/socket.io.js"></script>
+  </head>
+  <body>
+    <header>
+      <h1>Suwuperviser</h1>
+    </header>
+    <main>
+      <div class="top-section">
+        <div class="hardware-stats">
+          <h2>Hardware Stats</h2>
+          <div class="graph-container">
+            <canvas id="cpu-usage-chart"></canvas>
+            <canvas id="cpu-temp-chart"></canvas>
+            <canvas id="network-traffic-chart"></canvas>
+          </div>
+        </div>
+        <div class="add-process">
+          <h2>Add Program</h2>
+          <form>
+            <label for="process-name">Program Name:</label>
+            <input type="text" id="process-name" name="process-name" required />
+            <label for="process-source">Program Source:</label>
+            <div>
+              <input
+                type="text"
+                id="process-github"
+                name="process-github"
+                placeholder="GitHub link"
+              />
+              <span>or</span>
+              <input
+                type="file"
+                id="process-zip"
+                name="process-zip"
+                accept=".zip"
+              />
+            </div>
+            <label for="process-port">Program Port:</label>
+            <input
+              type="number"
+              id="process-port"
+              name="process-port"
+              required
+            />
+            <button type="submit">Add Program</button>
+          </form>
+        </div>
+      </div>
+      <div class="process-list">
+        <h2>Running Programs</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Program Name</th>
+              <th>Port</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="process-list-body"></tbody>
+        </table>
+      </div>
+    </main>
+    <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </body>
+</html>
