@@ -219,7 +219,10 @@ io.on("connection", (socket) => {
 
   socket.on("github", (data) => {
     let newId = crypto.randomUUID();
-    downloadGitRepo(data.url, join(__dirname, "programs", newId)).then((v) => {
+    downloadGitRepo(
+      data.url.slice(-4) == ".git" ? data.url : data.url + ".git",
+      join(__dirname, "programs", newId)
+    ).then((v) => {
       if (v) {
         programs.push({
           name: data.name,
