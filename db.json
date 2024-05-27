@@ -11,6 +11,18 @@
       "port": "80",
       "uuid": "58f3b8de-9790-4761-b33b-0b29e051f962",
       "autostart": false
+    },
+    {
+      "name": "FNAFBrowser",
+      "port": "8080",
+      "uuid": "7b0aa415-91ad-4b2e-b8fc-7ada21ade67d",
+      "autostart": false
+    },
+    {
+      "name": "FNAFBrowser2",
+      "port": "8081",
+      "uuid": "886637a3-b62f-490b-aa36-beef3d035aac",
+      "autostart": false
     }
   ]
 }

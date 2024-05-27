@@ -45,16 +45,17 @@ addProcessForm.addEventListener("submit", (e) => {
   const processZip = document.getElementById("process-zip").files[0];
   const processPort = document.getElementById("process-port").value;
   if (processGitHub) {
-    console.log(
-      `Adding process ${processName} from GitHub: ${processGitHub} on port ${processPort}`
-    );
+    socket.emit("github", {
+      url: processGitHub,
+      name: processName,
+      port: processPort,
+    });
   } else if (processZip) {
-    console.log(
-      `Adding process ${processName} from ZIP file on port ${processPort}`
-    );
     handleZipUpload(processZip, processName, processPort);
   }
   addProcessForm.reset();
+  document.getElementById("add-program").disabled = true;
+  document.getElementById("add-program").innerHTML = "...";
 });
 
 function handleZipUpload(zipFile, programName, programPort) {

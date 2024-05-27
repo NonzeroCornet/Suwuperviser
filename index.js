@@ -13,6 +13,7 @@ require("dotenv").config();
 const express = require("express");
 const { join, extname } = require("node:path");
 const { createServer, get } = require("node:http");
+const http = require("isomorphic-git/http/node");
 const { Server } = require("socket.io");
 const cookieParser = require("cookie-parser");
 const { isText } = require("istextorbinary");
@@ -20,6 +21,7 @@ const crypto = require("node:crypto");
 const unzipper = require("unzipper");
 const os = require("os");
 const { exec } = require("child_process");
+const git = require("isomorphic-git");
 
 const app = express();
 app.use(cookieParser());
@@ -128,6 +130,32 @@ const findTextFiles = (dir, textFiles, callback) => {
   });
 };
 
+async function downloadGitRepo(repoUrl, targetDir) {
+  try {
+    if (!fs.existsSync(targetDir)) {
+      fs.mkdirSync(targetDir, { recursive: true });
+    }
+
+    await git.clone({
+      fs,
+      http,
+      dir: targetDir,
+      url: repoUrl,
+      depth: 1,
+    });
+
+    const gitFolderPath = join(targetDir, ".git");
+    if (fs.existsSync(gitFolderPath)) {
+      fs.rmSync(gitFolderPath, { recursive: true });
+    }
+
+    return true;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+}
+
 io.on("connection", (socket) => {
   socket.emit("programs", programs);
   socket.on("inspect", (uuid) => {
@@ -177,7 +205,6 @@ io.on("connection", (socket) => {
             });
             saveDb();
             fs.writeFileSync("./programs/" + newId + "/.suwut", "");
-            runProgram(newId);
             fs.unlink(filepath, () => {
               socket.emit("uploadResult", true);
             });
@@ -186,6 +213,26 @@ io.on("connection", (socket) => {
             console.error("Unzipping error:", err);
             socket.emit("uploadResult", false);
           });
+      }
+    });
+  });
+
+  socket.on("github", (data) => {
+    let newId = crypto.randomUUID();
+    downloadGitRepo(data.url, join(__dirname, "programs", newId)).then((v) => {
+      if (v) {
+        programs.push({
+          name: data.name,
+          port: data.port,
+          uuid: newId,
+          status: "Offline",
+          autostart: false,
+        });
+        saveDb();
+        fs.writeFileSync("./programs/" + newId + "/.suwut", "");
+        socket.emit("uploadResult", true);
+      } else {
+        socket.emit("uploadResult", false);
       }
     });
   });
@@ -228,12 +275,10 @@ function runProgram(uuid) {
     }
   );
 
-  // Pipe the stdout and stderr to the output file
   const outputStream = fs.createWriteStream(outputFilePath);
   child.stdout.pipe(outputStream);
   child.stderr.pipe(outputStream);
 
-  // Handle child process exit
   child.on("exit", (code) => {
     outputStream.end();
   });
