@@ -151,7 +151,6 @@ async function downloadGitRepo(repoUrl, targetDir) {
 
     return true;
   } catch (error) {
-    console.log(error);
     return false;
   }
 }
