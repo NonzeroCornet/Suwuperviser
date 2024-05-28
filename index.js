@@ -13,6 +13,7 @@ require("dotenv").config();
 const express = require("express");
 const { join, extname } = require("node:path");
 const { createServer, get } = require("node:http");
+const https = require("https");
 const http = require("isomorphic-git/http/node");
 const { Server } = require("socket.io");
 const cookieParser = require("cookie-parser");
@@ -30,7 +31,18 @@ const isWindows = os.platform() === "win32";
 
 const app = express();
 app.use(cookieParser());
-const server = createServer(app);
+let server;
+if (process.env.HTTPS == "true") {
+  server = https.createServer(
+    {
+      cert: fs.readFileSync(join(__dirname, "ssl", "server.crt")),
+      key: fs.readFileSync(join(__dirname, "ssl", "server.key")),
+    },
+    app
+  );
+} else {
+  server = createServer(app);
+}
 const io = new Server(server, {
   maxHttpBufferSize: 1e8,
 });
