@@ -1,7 +1,7 @@
 <div align="center">
   <h3 align="center">Suwuperviser</h3>
   <p align="center">
-    A server program manager. NOTE: in the .env you can set your password, port, and Fast.com token.
+    A server program manager. NOTE: in the .env you must set your password, port, total amount of RAM in Gb, and Fast.com token.
     <br />
     <br/>
   </p>

@@ -41,7 +41,7 @@ async function getramAvailability() {
       parseFloat(stdout.split(": ")[1].split(" ")[0].replace(",", "")) / 1000;
     return isNaN(ramAvailability) ? "N/A" : ramAvailability;
   } else {
-    const { stdout } = await exec("free -m | awk '/^Mem/ {print $3}'");
+    const { stdout } = await exec("free -m | awk '/^Mem/ {print $4 / 1024}'");
     const ramAvailability = parseFloat(stdout.trim());
     return isNaN(ramAvailability) ? "N/A" : ramAvailability;
   }

@@ -43,8 +43,9 @@ socket.emit("inspect", programId);
 
 socket.on("inspectr", (data) => {
   terminalOutput.innerHTML = data[1]
-    .replace(/[\u00A0-\u9999<>\&]/g, (i) => "&#" + i.charCodeAt(0) + ";")
+    .replaceAll(/[\u00A0-\u9999<>\&]/g, (i) => "&#" + i.charCodeAt(0) + ";")
     .replaceAll("\r\n", "<br>")
+    .replaceAll("\n", "<br>")
     .replaceAll(" ", "&nbsp;&nbsp;");
   for (let i = 0; i < data[0].length; i++) {
     document.getElementById("file-tree").innerHTML +=
@@ -62,8 +63,9 @@ function getFile(el) {
 socket.on("sendFile", (data) => {
   console.log([data]);
   document.getElementById("file-content").innerHTML = data
-    .replace(/[\u00A0-\u9999<>\&]/g, (i) => "&#" + i.charCodeAt(0) + ";")
+    .replaceAll(/[\u00A0-\u9999<>\&]/g, (i) => "&#" + i.charCodeAt(0) + ";")
     .replaceAll("\r\n", "<br>")
+    .replaceAll("\n", "<br>")
     .replaceAll(" ", "&nbsp;&nbsp;");
 });
 

@@ -25,6 +25,8 @@ const git = require("isomorphic-git");
 const getSystemUsage = require("./systemUsage.js");
 const FastSpeedtest = require("fast-speedtest-api");
 
+const isWindows = os.platform() === "win32";
+
 const app = express();
 app.use(cookieParser());
 const server = createServer(app);
@@ -123,7 +125,9 @@ const findTextFiles = (dir, textFiles, callback) => {
         extname(filePath).toLowerCase() != "suwut" &&
         isText(filePath)
       ) {
-        textFiles.push(filePath.split("\\").slice(2).join("/"));
+        isWindows
+          ? textFiles.push(filePath.split("\\").slice(2).join("/"))
+          : textFiles.push(filePath.split(dir + "/")[1]);
         if (!--pending) callback(textFiles);
       } else {
         if (!--pending) callback(textFiles);
@@ -162,8 +166,8 @@ io.on("connection", (socket) => {
   socket.on("inspect", (uuid) => {
     let out = [];
 
-    findTextFiles("./programs/" + uuid, out, () => {
-      fs.readFile("./programs/" + uuid + "/.suwut", (err, data) => {
+    findTextFiles(join(__dirname, "programs", uuid), out, () => {
+      fs.readFile(join(__dirname, "programs", uuid, ".suwut"), (err, data) => {
         if (err) {
           console.error(`Error reading terminal: ${err.message}`);
           socket.emit("inspectr", [out, "Error reading terminal."]);
@@ -174,7 +178,7 @@ io.on("connection", (socket) => {
     });
   });
   socket.on("readFile", (dir) => {
-    fs.readFile("./programs/" + dir, (err, data) => {
+    fs.readFile(join(__dirname, "programs", dir), (err, data) => {
       if (err) {
         console.error(`Error reading file: ${err.message}`);
       } else {
@@ -258,16 +262,22 @@ io.on("connection", (socket) => {
   });
 });
 
-const isWindows = os.platform() === "win32";
 const script = isWindows ? "start.bat" : "start.sh";
 
 function runProgram(uuid) {
   const outputFilePath = join(__dirname + "/programs/" + uuid, ".suwut");
-  const scriptPath = join(
-    'C:\\"' + __dirname.slice(3) + '"/programs/' + uuid,
-    script
-  );
+  const scriptPath = isWindows
+    ? join('C:\\"' + __dirname.slice(3) + '"/programs/' + uuid, script)
+    : __dirname + "/programs/" + uuid + "/" + script;
   const command = isWindows ? `cmd.exe /c ${scriptPath}` : scriptPath;
+
+  if (!isWindows) {
+    fs.chmod(scriptPath, fs.constants.S_IXUSR, (err) => {
+      if (err) {
+        console.error(`Error making ${script} executable:`, err);
+      }
+    });
+  }
 
   const child = exec(
     command,
@@ -280,8 +290,17 @@ function runProgram(uuid) {
   );
 
   const outputStream = fs.createWriteStream(outputFilePath);
-  child.stdout.pipe(outputStream);
-  child.stderr.pipe(outputStream);
+  child.stdout.on("data", (data) => {
+    if (outputStream.writable) {
+      outputStream.write(data);
+    }
+  });
+
+  child.stderr.on("data", (data) => {
+    if (outputStream.writable) {
+      outputStream.write(data);
+    }
+  });
 
   child.on("exit", (code) => {
     outputStream.end();
@@ -331,7 +350,11 @@ setInterval(() => {
     speedtest
       .getSpeed()
       .then((s) => {
-        io.emit("hardware", [usage.cpuUsage, usage.ramAvailability, s]);
+        io.emit("hardware", [
+          usage.cpuUsage,
+          usage.ramAvailability / process.env.TOTALRAMGB,
+          s,
+        ]);
       })
       .catch((e) => {
         console.error(e.message);

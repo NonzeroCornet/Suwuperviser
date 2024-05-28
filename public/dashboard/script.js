@@ -151,7 +151,7 @@ let ramChart = new Chart("ram-availability-chart", {
     maintainAspectRatio: false,
     legend: { display: false },
     scales: {
-      yAxes: [{ ticks: { min: 0, max: 32 } }],
+      yAxes: [{ ticks: { min: 0, max: 1 } }],
     },
   },
 });
@@ -175,7 +175,7 @@ let networkChart = new Chart("network-traffic-chart", {
     maintainAspectRatio: false,
     legend: { display: false },
     scales: {
-      yAxes: [{ ticks: { min: 0, max: 100 } }],
+      yAxes: [{ ticks: { min: 0, max: 200 } }],
     },
   },
 });
