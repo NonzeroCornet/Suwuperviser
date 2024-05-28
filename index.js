@@ -319,12 +319,12 @@ setInterval(() => {
 
   let speedtest = new FastSpeedtest({
     token: process.env.FASTCOMTOKEN, // required
-    verbose: false, // default: false
-    timeout: 10000, // default: 5000
-    https: true, // default: true
-    urlCount: 5, // default: 5
-    bufferSize: 8, // default: 8
-    unit: FastSpeedtest.UNITS.Mbps, // default: Bps
+    verbose: false,
+    timeout: 1000,
+    https: true,
+    urlCount: 5,
+    bufferSize: 8,
+    unit: FastSpeedtest.UNITS.Mbps,
   });
 
   getSystemUsage().then((usage) => {
