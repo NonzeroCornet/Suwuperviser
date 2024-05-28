@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Program Details</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/sweetalert.js"></script>
+  </head>
+  <body
+    onload="setTimeout(()=>document.getElementById('transitionDiv').style.opacity = 0, 500)"
+  >
+    <div id="transitionDiv"></div>
+    <header>
+      <a
+        onclick="document.getElementById('transitionDiv').style.opacity = 1; setTimeout(()=>window.location.href = '/', 500);"
+        ><img src="/house.png"
+      /></a>
+      <a
+        onclick="document.cookie = 'session=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/;'; window.location.href = '/'"
+        ><img src="/logout.png" class="right"
+      /></a>
+      <h1>Open Ports</h1>
+    </header>
+    <main>
+      <div class="terminal">
+        <div class="terminal-output">Fetching open ports...</div>
+      </div>
+    </main>
+    <script src="script.js" defer></script>
+  </body>
+</html>

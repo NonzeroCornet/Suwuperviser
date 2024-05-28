@@ -96,15 +96,18 @@ let networkSpeed = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
 const xValues = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
+let updateArray = (a1, a2) => {
+  for (let i = 0; i < a1.length; i++) {
+    a1[i] = a2[i];
+  }
+};
+
 socket.on("hardware", (data) => {
-  cpuUsage.shift();
-  cpuUsage.push(data[0] / 100);
+  updateArray(cpuUsage, data[0]);
   cpuChart.update();
-  ramAvailability.shift();
-  ramAvailability.push(data[1]);
+  updateArray(ramAvailability, data[1]);
   ramChart.update();
-  networkSpeed.shift();
-  networkSpeed.push(data[2]);
+  updateArray(networkSpeed, data[2]);
   networkChart.update();
 });
 

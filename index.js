@@ -24,6 +24,7 @@ const { exec } = require("child_process");
 const git = require("isomorphic-git");
 const getSystemUsage = require("./systemUsage.js");
 const FastSpeedtest = require("fast-speedtest-api");
+const net = require("net");
 
 const isWindows = os.platform() === "win32";
 
@@ -161,8 +162,61 @@ async function downloadGitRepo(repoUrl, targetDir) {
   }
 }
 
+function getOpenPorts(callback) {
+  const openPorts = [];
+  let currentPort = 1;
+
+  function checkNextPort() {
+    if (currentPort > 65535) {
+      callback(openPorts);
+      return;
+    }
+
+    const socket = new net.Socket();
+    socket.once("error", (err) => {
+      if (err.code === "ECONNREFUSED") {
+        socket.destroy();
+        currentPort++;
+        setImmediate(checkNextPort);
+      } else {
+        socket.destroy();
+        currentPort++;
+        setImmediate(checkNextPort);
+      }
+    });
+    socket.once("connect", () => {
+      if (currentPort == 22) {
+        openPorts.push(currentPort + " - SSH");
+      } else if (currentPort == (process.env.PORT || 8080)) {
+        openPorts.push(currentPort + " - Suwupervisor");
+      } else if (programs.find((el) => el.port == currentPort)) {
+        openPorts.push(
+          currentPort +
+            " - " +
+            programs.find((el) => el.port == currentPort).name
+        );
+      } else {
+        openPorts.push(currentPort + " - Unknown");
+      }
+      socket.destroy();
+      currentPort++;
+      setImmediate(checkNextPort);
+    });
+    socket.connect(currentPort, "127.0.0.1");
+  }
+
+  checkNextPort();
+}
+
+let gettingPorts = false;
+
+let cpuUsage = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+let ramAvailability = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+let networkSpeed = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
 io.on("connection", (socket) => {
   socket.emit("programs", programs);
+  socket.emit("hardware", [cpuUsage, ramAvailability, networkSpeed]);
   socket.on("inspect", (uuid) => {
     let out = [];
 
@@ -260,6 +314,16 @@ io.on("connection", (socket) => {
     programs.find((el) => el.uuid == v[0]).autostart = v[1];
     saveDb();
   });
+
+  socket.on("getOpenPorts", () => {
+    if (!gettingPorts) {
+      gettingPorts = true;
+      getOpenPorts((openPorts) => {
+        io.emit("openPorts", openPorts);
+        gettingPorts = false;
+      });
+    }
+  });
 });
 
 const script = isWindows ? "start.bat" : "start.sh";
@@ -350,11 +414,13 @@ setInterval(() => {
     speedtest
       .getSpeed()
       .then((s) => {
-        io.emit("hardware", [
-          usage.cpuUsage,
-          usage.ramAvailability / process.env.TOTALRAMGB,
-          s,
-        ]);
+        cpuUsage.shift();
+        cpuUsage.push(usage.cpuUsage / 100);
+        ramAvailability.shift();
+        ramAvailability.push(usage.ramAvailability / process.env.TOTALRAMGB);
+        networkSpeed.shift();
+        networkSpeed.push(s);
+        io.emit("hardware", [cpuUsage, ramAvailability, networkSpeed]);
       })
       .catch((e) => {
         console.error(e.message);

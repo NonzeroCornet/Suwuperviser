@@ -80,7 +80,13 @@
           <thead>
             <tr>
               <th>Program Name</th>
-              <th>Port</th>
+              <th>
+                Port (<a
+                  style="cursor: pointer; text-decoration: underline"
+                  onclick="document.getElementById('transitionDiv').style.opacity = 1; setTimeout(()=>window.location.href = '/ports', 500);"
+                  >View Open Ports</a
+                >)
+              </th>
               <th>Inspect</th>
             </tr>
           </thead>
