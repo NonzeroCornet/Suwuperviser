@@ -23,6 +23,7 @@ const os = require("os");
 const { exec } = require("child_process");
 const git = require("isomorphic-git");
 const getSystemUsage = require("./systemUsage.js");
+const FastSpeedtest = require("fast-speedtest-api");
 
 const app = express();
 app.use(cookieParser());
@@ -316,12 +317,25 @@ setInterval(() => {
     });
   }
 
+  let speedtest = new FastSpeedtest({
+    token: process.env.FASTCOMTOKEN, // required
+    verbose: false, // default: false
+    timeout: 10000, // default: 5000
+    https: true, // default: true
+    urlCount: 5, // default: 5
+    bufferSize: 8, // default: 8
+    unit: FastSpeedtest.UNITS.Mbps, // default: Bps
+  });
+
   getSystemUsage().then((usage) => {
-    io.emit("hardware", [
-      usage.cpuUsage,
-      usage.ramAvailability,
-      usage.networkUsage,
-    ]);
+    speedtest
+      .getSpeed()
+      .then((s) => {
+        io.emit("hardware", [usage.cpuUsage, usage.ramAvailability, s]);
+      })
+      .catch((e) => {
+        console.error(e.message);
+      });
   });
 }, 3000);
 

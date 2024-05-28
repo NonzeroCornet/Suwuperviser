@@ -92,23 +92,19 @@ socket.on("uploadResult", (result) => {
 
 let cpuUsage = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 let ramAvailability = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-let networkUsage1 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-let networkUsage2 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+let networkSpeed = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
 const xValues = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 socket.on("hardware", (data) => {
-  console.log(data);
   cpuUsage.shift();
   cpuUsage.push(data[0] / 100);
   cpuChart.update();
   ramAvailability.shift();
   ramAvailability.push(data[1]);
   ramChart.update();
-  networkUsage1.shift();
-  networkUsage1.push(data[2][0] / 100000000);
-  networkUsage2.shift();
-  networkUsage2.push(data[2][1] / 1000000000);
+  networkSpeed.shift();
+  networkSpeed.push(data[2]);
   networkChart.update();
 });
 
@@ -170,14 +166,7 @@ let networkChart = new Chart("network-traffic-chart", {
         lineTension: 0,
         backgroundColor: "rgba(0,0,255,1.0)",
         borderColor: "rgba(0,0,255,1.0)",
-        data: networkUsage1,
-      },
-      {
-        fill: false,
-        lineTension: 0,
-        backgroundColor: "rgba(255,0,0,1.0)",
-        borderColor: "rgba(255,0,0,1.0)",
-        data: networkUsage2,
+        data: networkSpeed,
       },
     ],
   },
@@ -186,7 +175,7 @@ let networkChart = new Chart("network-traffic-chart", {
     maintainAspectRatio: false,
     legend: { display: false },
     scales: {
-      yAxes: [{ ticks: { min: 0, max: 10 } }],
+      yAxes: [{ ticks: { min: 0, max: 100 } }],
     },
   },
 });
