@@ -318,7 +318,7 @@ setInterval(() => {
   }
 
   let speedtest = new FastSpeedtest({
-    token: process.env.FASTCOMTOKEN, // required
+    token: process.env.FASTCOMTOKEN,
     verbose: false,
     timeout: 1000,
     https: true,
