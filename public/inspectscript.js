@@ -47,6 +47,7 @@ socket.on("inspectr", (data) => {
     .replaceAll("\r\n", "<br>")
     .replaceAll("\n", "<br>")
     .replaceAll(" ", "&nbsp;&nbsp;");
+  terminalOutput.scrollTop = terminalOutput.scrollHeight;
   for (let i = 0; i < data[0].length; i++) {
     document.getElementById("file-tree").innerHTML +=
       "<span onclick='getFile(this)' class='pointer'>" +
